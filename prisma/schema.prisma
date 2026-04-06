@@ -1,0 +1,85 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  //url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  role          Role      @default(STUDENT)
+  avatar        String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  projects      Project[]
+  enrollments   Enrollment[]
+
+  @@map("users")
+}
+
+model Project {
+  id             String   @id @default(cuid())
+  title          String
+  description    String
+  problemSolved  String
+  techStack      String[] // e.g. ["React", "Node.js"]
+  status         ProjectStatus  @default(SUBMITTED)
+  aiValidation   String?  // JSON or text from Grok AI
+  adminNotes     String?
+  demoLink       String?  // later for hosted project
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  userId         String
+  user           User     @relation(fields: [userId], references: [id])
+
+  @@map("projects")
+}
+
+model Course {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  price       Int      // in paise (Razorpay uses smallest unit, e.g. 49900 = ₹499)
+  isFree      Boolean  @default(false)
+  duration    String?  // e.g. "10 hours"
+  level       String?  // Beginner, Intermediate
+  createdAt   DateTime @default(now())
+
+  enrollments Enrollment[]
+
+  @@map("courses")
+}
+
+model Enrollment {
+  id         String   @id @default(cuid())
+  userId     String
+  courseId   String
+  enrolledAt DateTime @default(now())
+  completed  Boolean  @default(false)
+
+  user       User     @relation(fields: [userId], references: [id])
+  course     Course   @relation(fields: [courseId], references: [id])
+
+  @@unique([userId, courseId])
+  @@map("enrollments")
+}
+
+enum Role {
+  STUDENT
+  ADMIN
+  INSTRUCTOR
+}
+
+enum ProjectStatus {
+  SUBMITTED
+  VALIDATED
+  IN_PROGRESS
+  HOSTED
+  REJECTED
+}
