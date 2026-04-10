@@ -29,6 +29,6 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
-  ],
+, "proxy.ts.duplicate"  ],
   "exclude": ["node_modules"]
 }
