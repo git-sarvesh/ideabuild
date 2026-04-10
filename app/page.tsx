@@ -3,12 +3,13 @@
 import { Button } from '@/components/ui/button';
 import {
   Card,
+  CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
 
-import { Users, Trophy, Sparkles, Target, Zap, Heart } from 'lucide-react';
+import { ArrowRight, Users, Trophy, Sparkles, Target, Zap, Heart } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 
@@ -29,7 +30,7 @@ export default function Home() {
             <div className="w-9 h-9 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-2xl flex items-center justify-center">
               <Sparkles className="w-5 h-5" />
             </div>
-            <h1 className="text-2xl font-bold tracking-tighter">IdeaBuild</h1>
+            <h1 className="text-2xl font-bold tracking-tighter">Paltechs</h1>
           </Link>
 
           <div className="flex items-center gap-8 text-sm">
@@ -49,7 +50,7 @@ export default function Home() {
               </Button>
             ) : (
               <Button asChild className="bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-700 hover:to-fuchsia-700">
-                <Link href="/signup">Register</Link>
+                <Link href="/register">Register</Link>
               </Button>
             )}
           </div>
@@ -97,11 +98,11 @@ export default function Home() {
         </div>
       </section>
 
-      {/* About IdeaBuild Section */}
+      {/* About Section */}
       <section id="about" className="py-24 bg-zinc-950 border-t border-white/10">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-5xl font-bold mb-6">About IdeaBuild</h2>
+            <h2 className="text-5xl font-bold mb-6">About Paltechs</h2>
             <p className="text-2xl text-gray-400 max-w-3xl mx-auto">
               We are a student-first platform that turns college project ideas into real, hosted products.
             </p>
@@ -114,8 +115,7 @@ export default function Home() {
               </div>
               <h3 className="text-2xl font-semibold mb-4">For Students, By Students</h3>
               <p className="text-gray-400">
-                We understand the struggles of Indian college students — limited resources, no mentorship, 
-                and no proper platform to turn ideas into reality. That&apos;s why we built IdeaBuild.
+                We understand the struggles of Indian college students. Paltechs gives you the platform, support, and opportunity to turn your ideas into real products.
               </p>
             </Card>
 
@@ -125,8 +125,7 @@ export default function Home() {
               </div>
               <h3 className="text-2xl font-semibold mb-4">Real Rewards</h3>
               <p className="text-gray-400">
-                When we build and host your product, you earn from the profits. 
-                Plus, you get industry-recognized certifications that boost your resume.
+                When we build and host your product, you earn rewards. You also get valuable certifications to boost your career.
               </p>
             </Card>
 
@@ -136,8 +135,7 @@ export default function Home() {
               </div>
               <h3 className="text-2xl font-semibold mb-4">Full Support</h3>
               <p className="text-gray-400">
-                Our team + built-in AI assistant helps you at every step. 
-                You focus on creativity. We handle the rest.
+                Our team + AI assistant helps you at every step. Focus on ideas — we handle the rest.
               </p>
             </Card>
           </div>
