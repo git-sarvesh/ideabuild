@@ -50,7 +50,7 @@ export default function Home() {
               </Button>
             ) : (
               <Button asChild className="bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-700 hover:to-fuchsia-700">
-                <Link href="/register">Register</Link>
+                <Link href="/auth/signup">Register</Link>
               </Button>
             )}
           </div>
