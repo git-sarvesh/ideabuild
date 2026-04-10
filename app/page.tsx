@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 
-import { Users, Trophy, Sparkles, Target, Heart, Zap } from 'lucide-react';
+import { Users, Trophy, Sparkles, Target, Zap, Heart } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 
@@ -22,20 +22,27 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden">
-      {/* Navbar */}
+      {/* Navbar - Logo is clickable */}
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/10 bg-black/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
             <div className="w-9 h-9 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-2xl flex items-center justify-center">
               <Sparkles className="w-5 h-5" />
             </div>
             <h1 className="text-2xl font-bold tracking-tighter">IdeaBuild</h1>
-          </div>
+          </Link>
 
           <div className="flex items-center gap-8 text-sm">
             <Link href="#about" className="hover:text-violet-400 transition-colors">About</Link>
             <Link href="#how-it-works" className="hover:text-violet-400 transition-colors">How it Works</Link>
-            <Link href="/submit" className="hover:text-violet-400 transition-colors">Submit Idea</Link>
+            
+            {/* Submit Idea opens in new tab */}
+            <button 
+              onClick={() => window.open('/submit', '_blank')}
+              className="hover:text-violet-400 transition-colors font-medium"
+            >
+              Submit Idea
+            </button>
 
             {isLoggedIn ? (
               <Button asChild className="bg-white text-black hover:bg-white/90">
@@ -108,8 +115,8 @@ export default function Home() {
               </div>
               <h3 className="text-2xl font-semibold mb-4">For Students, By Students</h3>
               <p className="text-gray-400">
-                We understand the struggles of Indian college students — limited resources, no mentorship, and no platform to turn ideas into reality. 
-                That&apos;s why we built IdeaBuild.
+                We understand the struggles of Indian college students — limited resources, no mentorship, 
+                and no proper platform to turn ideas into reality. That&#39;s why we built IdeaBuild.
               </p>
             </Card>
 
@@ -130,23 +137,10 @@ export default function Home() {
               </div>
               <h3 className="text-2xl font-semibold mb-4">Full Support</h3>
               <p className="text-gray-400">
-                Our team + built-in AI assistant helps you at every step — from idea validation to final deployment. 
+                Our team + built-in AI assistant helps you at every step. 
                 You focus on creativity. We handle the rest.
               </p>
             </Card>
-          </div>
-
-          <div className="mt-20 text-center">
-            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-              IdeaBuild is more than just a platform — it&apos;s a movement to empower the next generation of Indian innovators.
-            </p>
-            <Button 
-              size="lg" 
-              className="mt-10 text-lg px-12 py-7 rounded-2xl bg-gradient-to-r from-violet-600 to-fuchsia-600"
-              onClick={() => window.open('/submit', '_blank')}
-            >
-              Join with us — Submit Your Idea
-            </Button>
           </div>
         </div>
       </section>
@@ -176,7 +170,7 @@ export default function Home() {
                   <Sparkles className="w-9 h-9 text-violet-400" />
                 </div>
                 <CardTitle>2. Validation</CardTitle>
-                <CardDescription>AI + our team checks feasibility and real-world impact</CardDescription>
+                <CardDescription>AI + our team checks feasibility and impact</CardDescription>
               </CardHeader>
             </Card>
 
@@ -186,7 +180,7 @@ export default function Home() {
                   <Target className="w-9 h-9 text-violet-400" />
                 </div>
                 <CardTitle>3. Build & Host</CardTitle>
-                <CardDescription>We help you build and permanently host the product</CardDescription>
+                <CardDescription>We help build and permanently host your product</CardDescription>
               </CardHeader>
             </Card>
 
@@ -196,7 +190,7 @@ export default function Home() {
                   <Trophy className="w-9 h-9 text-violet-400" />
                 </div>
                 <CardTitle>4. Get Rewarded</CardTitle>
-                <CardDescription>Earn profits + valuable certifications</CardDescription>
+                <CardDescription>Earn from profits + valuable certifications</CardDescription>
               </CardHeader>
             </Card>
           </div>
