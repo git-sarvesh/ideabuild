@@ -50,7 +50,7 @@ export default function Home() {
               </Button>
             ) : (
               <Button asChild className="bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-700 hover:to-fuchsia-700">
-                <Link href="/auth/signup">Register</Link>
+                <Link href="/signup">Register</Link>
               </Button>
             )}
           </div>
@@ -116,7 +116,7 @@ export default function Home() {
               <h3 className="text-2xl font-semibold mb-4">For Students, By Students</h3>
               <p className="text-gray-400">
                 We understand the struggles of Indian college students — limited resources, no mentorship, 
-                and no proper platform to turn ideas into reality. That's why we built IdeaBuild.
+                and no proper platform to turn ideas into reality. That&apos;s why we built IdeaBuild.
               </p>
             </Card>
 
