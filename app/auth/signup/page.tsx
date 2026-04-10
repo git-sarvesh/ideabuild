@@ -2,136 +2,149 @@
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import Link from 'next/link';
 import { useState } from 'react';
+import { supabase } from '@/lib/supabase';
+import { useRouter } from 'next/navigation';
 
-export default function SubmitIdea() {
+export default function SignupPage() {
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    problemSolved: '',
-    techStack: '',
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
   });
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const router = useRouter();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError('');
 
-    // Save idea to localStorage (we'll connect to Supabase later)
-    const newIdea = {
-      id: Date.now(),
-      title: formData.title,
-      description: formData.description,
-      problemSolved: formData.problemSolved,
-      techStack: formData.techStack,
-      status: "Submitted",
-      submittedAt: new Date().toISOString(),
-    };
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match!");
+      setLoading(false);
+      return;
+    }
 
-    const existingIdeas = JSON.parse(localStorage.getItem('myIdeas') || '[]');
-    localStorage.setItem('myIdeas', JSON.stringify([...existingIdeas, newIdea]));
+    try {
+      const { error } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          data: {
+            full_name: formData.name,
+          },
+        },
+      });
 
-    alert("✅ Idea submitted successfully! You can view it in Dashboard → My Ideas.");
+      if (error) throw error;
 
-    // Close the tab after submission
-    setTimeout(() => {
-      window.close();
-    }, 1500);
+      alert("✅ Account created successfully! Please check your email to confirm.");
+      router.push('/');
+    } catch (err: unknown) {
+      const error = err as { message?: string };
+      setError(error.message || "Failed to create account. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white p-8">
-      <div className="max-w-2xl mx-auto">
-        <Button 
-          variant="ghost" 
-          onClick={() => window.close()} 
-          className="mb-8 flex items-center gap-2"
-        >
-          <ArrowLeft className="w-5 h-5" /> Back
-        </Button>
+    <div className="min-h-screen bg-black flex items-center justify-center p-6">
+      <Card className="w-full max-w-md bg-zinc-900 border-white/10">
+        <CardHeader className="text-center">
+          <CardTitle className="text-3xl font-bold text-white">Create Account</CardTitle>
+          <CardDescription className="text-gray-400">
+            Join IdeaBuild and start building real products
+          </CardDescription>
+        </CardHeader>
 
-        <Card className="bg-zinc-900 border-white/10">
-          <CardHeader>
-            <CardTitle className="text-4xl font-bold text-center">Submit Your Project Idea</CardTitle>
-            <p className="text-center text-gray-400 mt-3">
-              Share your idea and let us help you build it into a real product
-            </p>
-          </CardHeader>
+        <CardContent>
+          {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
-          <CardContent className="pt-8">
-            <form onSubmit={handleSubmit} className="space-y-8">
-              <div className="space-y-2">
-                <Label htmlFor="title">Project Title</Label>
-                <Input
-                  id="title"
-                  name="title"
-                  placeholder="e.g. Smart Waste Management System"
-                  value={formData.title}
-                  onChange={handleChange}
-                  required
-                  className="bg-zinc-800 border-white/20 text-white"
-                />
-              </div>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-2">
+              <Label htmlFor="name" className="text-white">Full Name</Label>
+              <Input
+                id="name"
+                name="name"
+                type="text"
+                placeholder="Sarvesh Balaji"
+                value={formData.name}
+                onChange={handleChange}
+                required
+                className="bg-zinc-800 border-white/20 text-white"
+              />
+            </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  name="description"
-                  placeholder="Describe your project in detail..."
-                  rows={5}
-                  value={formData.description}
-                  onChange={handleChange}
-                  required
-                  className="bg-zinc-800 border-white/20 text-white"
-                />
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-white">Email</Label>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                placeholder="sarvesh@gmail.com"
+                value={formData.email}
+                onChange={handleChange}
+                required
+                className="bg-zinc-800 border-white/20 text-white"
+              />
+            </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="problemSolved">What Problem Does It Solve?</Label>
-                <Textarea
-                  id="problemSolved"
-                  name="problemSolved"
-                  placeholder="Explain the real-world problem your idea solves..."
-                  rows={4}
-                  value={formData.problemSolved}
-                  onChange={handleChange}
-                  required
-                  className="bg-zinc-800 border-white/20 text-white"
-                />
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="password" className="text-white">Password</Label>
+              <Input
+                id="password"
+                name="password"
+                type="password"
+                placeholder="••••••••"
+                value={formData.password}
+                onChange={handleChange}
+                required
+                className="bg-zinc-800 border-white/20 text-white"
+              />
+            </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="techStack">Tech Stack (Optional)</Label>
-                <Input
-                  id="techStack"
-                  name="techStack"
-                  placeholder="React, Node.js, Python, TensorFlow, etc."
-                  value={formData.techStack}
-                  onChange={handleChange}
-                  className="bg-zinc-800 border-white/20 text-white"
-                />
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword" className="text-white">Confirm Password</Label>
+              <Input
+                id="confirmPassword"
+                name="confirmPassword"
+                type="password"
+                placeholder="••••••••"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                required
+                className="bg-zinc-800 border-white/20 text-white"
+              />
+            </div>
 
-              <Button 
-                type="submit" 
-                disabled={loading}
-                className="w-full py-7 text-lg bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-700 hover:to-fuchsia-700"
-              >
-                {loading ? "Submitting Idea..." : "Submit Idea for Review"}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
+            <Button 
+              type="submit" 
+              disabled={loading}
+              className="w-full py-6 text-lg bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-700 hover:to-fuchsia-700"
+            >
+              {loading ? "Creating Account..." : "Create Account"}
+            </Button>
+          </form>
+
+          <p className="text-center text-sm text-gray-400 mt-6">
+            Already have an account?{' '}
+            <Link href="/" className="text-violet-400 hover:underline">
+              Go back to Home
+            </Link>
+          </p>
+        </CardContent>
+      </Card>
     </div>
   );
 }
