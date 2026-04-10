@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 
-import { ArrowRight, Users, Trophy, Sparkles, Target, Zap, Heart } from 'lucide-react';
+import { Users, Trophy, Sparkles, Target, Zap, Heart } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 
