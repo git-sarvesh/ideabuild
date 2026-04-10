@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button';
 import {
   Card,
+  CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
@@ -22,7 +23,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden">
-      {/* Navbar - Logo is clickable */}
+      {/* Navbar */}
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/10 bg-black/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
@@ -36,7 +37,6 @@ export default function Home() {
             <Link href="#about" className="hover:text-violet-400 transition-colors">About</Link>
             <Link href="#how-it-works" className="hover:text-violet-400 transition-colors">How it Works</Link>
             
-            {/* Submit Idea opens in new tab */}
             <button 
               onClick={() => window.open('/submit', '_blank')}
               className="hover:text-violet-400 transition-colors font-medium"
@@ -116,7 +116,7 @@ export default function Home() {
               <h3 className="text-2xl font-semibold mb-4">For Students, By Students</h3>
               <p className="text-gray-400">
                 We understand the struggles of Indian college students — limited resources, no mentorship, 
-                and no proper platform to turn ideas into reality. That&#39;s why we built IdeaBuild.
+                and no proper platform to turn ideas into reality. That's why we built IdeaBuild.
               </p>
             </Card>
 
