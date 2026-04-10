@@ -50,8 +50,9 @@ export default function SignupPage() {
 
       alert("✅ Account created successfully! Please check your email to confirm.");
       router.push('/');
-    } catch (err: any) {
-      setError(err.message || "Failed to create account. Please try again.");
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to create account. Please try again.";
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
