@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Link from 'next/link';
 import { useState } from 'react';
+import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 
 export default function RegisterPage() {
@@ -34,17 +35,29 @@ export default function RegisterPage() {
       return;
     }
 
-    // Demo mode - using localStorage instead of Supabase
     try {
-      // Simulate successful registration
-      localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('userName', formData.name);
-      localStorage.setItem('userEmail', formData.email);
+      const { data, error } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          data: {
+            full_name: formData.name,
+          },
+        },
+      });
 
-      alert(`✅ Account created successfully for ${formData.name}!`);
-      router.push('/');
-    } catch (err) {
-      setError("Something went wrong. Please try again.");
+      if (error) throw error;
+
+      if (data.user) {
+        alert(`✅ Account created successfully for ${formData.name}! Please check your email to confirm.`);
+        localStorage.setItem('isLoggedIn', 'true');
+        router.push('/');
+      }
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error 
+        ? err.message 
+        : "Failed to create account. Please try again.";
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
