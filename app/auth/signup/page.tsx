@@ -6,7 +6,6 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Link from 'next/link';
 import { useState } from 'react';
-import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 
 export default function RegisterPage() {
@@ -35,27 +34,17 @@ export default function RegisterPage() {
       return;
     }
 
+    // Demo mode - using localStorage instead of Supabase
     try {
-      const { error } = await supabase.auth.signUp({
-        email: formData.email,
-        password: formData.password,
-        options: {
-          data: {
-            full_name: formData.name,
-          },
-        },
-      });
-
-      if (error) throw error;
-
-      alert("✅ Account created successfully! Please check your email to confirm.");
+      // Simulate successful registration
       localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('userName', formData.name);
+      localStorage.setItem('userEmail', formData.email);
+
+      alert(`✅ Account created successfully for ${formData.name}!`);
       router.push('/');
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error 
-        ? err.message 
-        : "Failed to create account. Please try again.";
-      setError(errorMessage);
+    } catch (err) {
+      setError("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -81,7 +70,7 @@ export default function RegisterPage() {
                 id="name"
                 name="name"
                 type="text"
-                placeholder="Enter your full name"
+                placeholder="Sarvesh Balaji"
                 value={formData.name}
                 onChange={handleChange}
                 required
@@ -95,7 +84,7 @@ export default function RegisterPage() {
                 id="email"
                 name="email"
                 type="email"
-                placeholder="Enter your email"
+                placeholder="sarvesh@gmail.com"
                 value={formData.email}
                 onChange={handleChange}
                 required
@@ -109,7 +98,7 @@ export default function RegisterPage() {
                 id="password"
                 name="password"
                 type="password"
-                placeholder="Enter your password"
+                placeholder="••••••••"
                 value={formData.password}
                 onChange={handleChange}
                 required
@@ -123,7 +112,7 @@ export default function RegisterPage() {
                 id="confirmPassword"
                 name="confirmPassword"
                 type="password"
-                placeholder="Confirm your password"
+                placeholder="••••••••"
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 required
