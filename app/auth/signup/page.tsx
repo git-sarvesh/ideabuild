@@ -1,5 +1,5 @@
 'use client';
-export const dynamic = 'force-dynamic';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -9,7 +9,7 @@ import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 
-export default function SignupPage() {
+export default function RegisterPage() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -49,9 +49,12 @@ export default function SignupPage() {
       if (error) throw error;
 
       alert("✅ Account created successfully! Please check your email to confirm.");
+      localStorage.setItem('isLoggedIn', 'true');
       router.push('/');
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : "Failed to create account. Please try again.";
+      const errorMessage = err instanceof Error 
+        ? err.message 
+        : "Failed to create account. Please try again.";
       setError(errorMessage);
     } finally {
       setLoading(false);
@@ -64,7 +67,7 @@ export default function SignupPage() {
         <CardHeader className="text-center">
           <CardTitle className="text-3xl font-bold text-white">Create Account</CardTitle>
           <CardDescription className="text-gray-400">
-            Join IdeaBuild and start building real products
+            Join Paltechs and start building real products
           </CardDescription>
         </CardHeader>
 
