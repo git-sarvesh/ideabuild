@@ -4,11 +4,11 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { LogOut, ExternalLink } from 'lucide-react';
+import { User, Lightbulb, BookOpen, Code2, LogOut, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 
 export default function Dashboard() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<{ name: string; email: string } | null>(null);
   const [submissions, setSubmissions] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState<'ideas' | 'profile' | 'courses' | 'coding'>('ideas');
 
@@ -19,14 +19,15 @@ export default function Dashboard() {
       return;
     }
 
+    // Get user info from localStorage (saved during registration)
     const userName = localStorage.getItem('userName') || 'Student';
-    const userEmail = localStorage.getItem('userEmail') || '';
+    const userEmail = localStorage.getItem('userEmail') || 'Not provided';
 
     setUser({ name: userName, email: userEmail });
 
     // Load submitted projects
-    const saved = JSON.parse(localStorage.getItem('submissions') || '[]');
-    setSubmissions(saved);
+    const savedSubmissions = JSON.parse(localStorage.getItem('submissions') || '[]');
+    setSubmissions(savedSubmissions);
   }, []);
 
   const handleLogout = () => {
@@ -100,9 +101,9 @@ export default function Dashboard() {
                 {submissions.map((project: any) => (
                   <Card key={project.id} className="bg-zinc-900 border-white/10">
                     <CardHeader>
-                      <div className="flex justify-between">
-                        <CardTitle className="text-xl">{project.title}</CardTitle>
-                        <Badge>{project.status || 'Under Review'}</Badge>
+                      <div className="flex justify-between items-start">
+                        <CardTitle>{project.title}</CardTitle>
+                        <Badge variant="secondary">{project.status || 'Under Review'}</Badge>
                       </div>
                       <CardDescription>
                         Submitted on {new Date(project.submittedAt).toLocaleDateString()}
@@ -110,7 +111,7 @@ export default function Dashboard() {
                     </CardHeader>
                     <CardContent>
                       <p className="text-gray-400 mb-4 line-clamp-3">{project.description}</p>
-
+                      
                       {project.mvpLink && (
                         <a
                           href={project.mvpLink}
@@ -129,20 +130,26 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Profile Tab */}
-        {activeTab === 'profile' && (
+        {/* Profile Tab - FIXED */}
+        {activeTab === 'profile' && user && (
           <Card className="bg-zinc-900 border-white/10">
             <CardHeader>
               <CardTitle>Profile Information</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6 text-lg">
-              <p><strong>Name:</strong> {user?.name}</p>
-              <p><strong>Email:</strong> {user?.email}</p>
+            <CardContent className="space-y-6 pt-6">
+              <div>
+                <p className="text-gray-400 text-sm">Name</p>
+                <p className="text-2xl font-semibold">{user.name}</p>
+              </div>
+              <div>
+                <p className="text-gray-400 text-sm">Email</p>
+                <p className="text-2xl font-semibold">{user.email}</p>
+              </div>
             </CardContent>
           </Card>
         )}
 
-        {/* Courses & Coding Tab (Coming Soon) */}
+        {/* Courses & Coding */}
         {(activeTab === 'courses' || activeTab === 'coding') && (
           <Card className="bg-zinc-900 border-white/10 p-20 text-center">
             <h2 className="text-3xl font-bold mb-4">
