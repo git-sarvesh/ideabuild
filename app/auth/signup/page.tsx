@@ -8,26 +8,33 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
+import { Github, Twitter, Mail } from 'lucide-react';
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
-    name: '',
+    fullName: '',
     email: '',
     password: '',
     confirmPassword: '',
+    college: '',
+    course: '',
+    year: '',
   });
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
   const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleEmailSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
+    setMessage('');
 
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match!");
@@ -36,27 +43,47 @@ export default function RegisterPage() {
     }
 
     try {
-      const { data, error } = await supabase.auth.signUp({
+      const { error } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
         options: {
           data: {
-            full_name: formData.name,
+            full_name: formData.fullName,
+            college: formData.college,
+            course: formData.course,
+            year: formData.year,
           },
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
         },
       });
 
       if (error) throw error;
 
-      if (data.user) {
-        alert(`✅ Account created successfully for ${formData.name}! Please check your email to confirm.`);
-        localStorage.setItem('isLoggedIn', 'true');
-        router.push('/');
-      }
+      setMessage("✅ Verification email sent! Please check your inbox and click the link to verify your account.");
     } catch (err: unknown) {
       const errorMessage = err instanceof Error 
         ? err.message 
         : "Failed to create account. Please try again.";
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSocialLogin = async (provider: 'google' | 'github' | 'twitter') => {
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+      if (error) throw error;
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error 
+        ? err.message 
+        : "Social login failed. Please try again.";
       setError(errorMessage);
     } finally {
       setLoading(false);
@@ -73,31 +100,66 @@ export default function RegisterPage() {
           </CardDescription>
         </CardHeader>
 
-        <CardContent>
-          {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+        <CardContent className="space-y-6">
+          {error && <p className="text-red-500 text-center">{error}</p>}
+          {message && <p className="text-green-500 text-center">{message}</p>}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="name" className="text-white">Full Name</Label>
+          {/* Social Login */}
+          <div className="grid grid-cols-3 gap-3">
+            <Button 
+              variant="outline" 
+              onClick={() => handleSocialLogin('google')}
+              disabled={loading}
+              className="flex items-center justify-center gap-2"
+            >
+              <Mail className="w-5 h-5" />
+            </Button>
+            <Button 
+              variant="outline" 
+              onClick={() => handleSocialLogin('github')}
+              disabled={loading}
+              className="flex items-center justify-center gap-2"
+            >
+              <Github className="w-5 h-5" />
+            </Button>
+            <Button 
+              variant="outline" 
+              onClick={() => handleSocialLogin('twitter')}
+              disabled={loading}
+              className="flex items-center justify-center gap-2"
+            >
+              <Twitter className="w-5 h-5" />
+            </Button>
+          </div>
+
+          <div className="relative text-center text-sm text-gray-500">
+            <span className="bg-zinc-900 px-4">OR</span>
+            <div className="absolute top-1/2 left-0 right-0 h-px bg-white/10" />
+          </div>
+
+          {/* Email Form */}
+          <form onSubmit={handleEmailSignup} className="space-y-5">
+            <div>
+              <Label htmlFor="fullName">Full Name</Label>
               <Input
-                id="name"
-                name="name"
+                id="fullName"
+                name="fullName"
                 type="text"
                 placeholder="Sarvesh Balaji"
-                value={formData.name}
+                value={formData.fullName}
                 onChange={handleChange}
                 required
                 className="bg-zinc-800 border-white/20 text-white"
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="email" className="text-white">Email</Label>
+            <div>
+              <Label htmlFor="email">Email Address</Label>
               <Input
                 id="email"
                 name="email"
                 type="email"
-                placeholder="sarvesh@gmail.com"
+                placeholder="your@email.com"
                 value={formData.email}
                 onChange={handleChange}
                 required
@@ -105,8 +167,51 @@ export default function RegisterPage() {
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="password" className="text-white">Password</Label>
+            <div>
+              <Label htmlFor="college">College / University</Label>
+              <Input
+                id="college"
+                name="college"
+                type="text"
+                placeholder="Anna University"
+                value={formData.college}
+                onChange={handleChange}
+                required
+                className="bg-zinc-800 border-white/20 text-white"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="course">Course / Branch</Label>
+                <Input
+                  id="course"
+                  name="course"
+                  type="text"
+                  placeholder="B.Tech CSE"
+                  value={formData.course}
+                  onChange={handleChange}
+                  required
+                  className="bg-zinc-800 border-white/20 text-white"
+                />
+              </div>
+              <div>
+                <Label htmlFor="year">Year</Label>
+                <Input
+                  id="year"
+                  name="year"
+                  type="text"
+                  placeholder="2nd Year"
+                  value={formData.year}
+                  onChange={handleChange}
+                  required
+                  className="bg-zinc-800 border-white/20 text-white"
+                />
+              </div>
+            </div>
+
+            <div>
+              <Label htmlFor="password">Password</Label>
               <Input
                 id="password"
                 name="password"
@@ -119,8 +224,8 @@ export default function RegisterPage() {
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword" className="text-white">Confirm Password</Label>
+            <div>
+              <Label htmlFor="confirmPassword">Confirm Password</Label>
               <Input
                 id="confirmPassword"
                 name="confirmPassword"
@@ -142,11 +247,9 @@ export default function RegisterPage() {
             </Button>
           </form>
 
-          <p className="text-center text-sm text-gray-400 mt-6">
+          <p className="text-center text-sm text-gray-400">
             Already have an account?{' '}
-            <Link href="/" className="text-violet-400 hover:underline">
-              Go back to Home
-            </Link>
+            <Link href="/" className="text-violet-400 hover:underline">Sign in</Link>
           </p>
         </CardContent>
       </Card>
